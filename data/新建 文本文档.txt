@@ -1,0 +1,108 @@
+dev:
+1 78
+2 72 150
+3 75 225
+4 75 300
+5 72 372
+6 72 444
+        """
+        with open(output_test_predictions_file, "w", encoding="utf-8") as writer:
+            with open(os.path.join(data_dir, "test.json"), "r", encoding="utf-8") as f:
+                data = json.load(f)
+            output_data = []
+            example_id = 1
+            for item in data:
+                sample_id = item['sample_id']
+                text = item['text']
+                entities = item.get('entities', [])
+                output_entities = []
+                if sample_id <= 5:
+                    print(f'sample_id: {sample_id},predictions[{sample_id}]: {predictions[sample_id]},len(predictions):{len(predictions)}')
+                if sample_id <= len(predictions) and predictions[sample_id]:
+                    for entity in entities:
+                        start = entity['start']
+                        end = entity['end']
+                        text_type = entity['type']
+                        # Assume predictions are provided as list of tuples (start, end, label)
+                        predicted_label = predictions[sample_id].pop(0)[2:]
+                        output_entities.append({
+                            'start': start,
+                            'end': end,
+                            'text': text[start:end],
+                            'true_type': text_type,
+                            'predicted_type': predicted_label
+                        })
+                    output_data.append({
+                        'sample_id': item['sample_id'],
+                        'text': text,
+                        'entities': output_entities
+                    })
+                else:
+                    logger.warning("No predictions available for sample_id %d", sample_id)
+
+            json.dump(output_data, writer, ensure_ascii=False, indent=4)
+        """
+
+
+0
+'装甲车辆': {'precision': 0.6991150442477876, 'recall': 0.7669902912621359, 'f1': 0.7314814814814814, 'number': 309}
+1
+'火炮': {'precision': 0.3689655172413793, 'recall': 0.622093023255814, 'f1': 0.4632034632034633, 'number': 172}
+'装甲车辆': {'precision': 0.5800524934383202, 'recall': 0.7152103559870551, 'f1': 0.6405797101449275, 'number': 309} 
+2
+'导弹': {'precision': 0.4007220216606498, 'recall': 0.8252788104089219, 'f1': 0.5394896719319563, 'number': 269}
+'火炮': {'precision': 0.43317972350230416, 'recall': 0.5465116279069767, 'f1': 0.4832904884318766, 'number': 172}
+'装甲车辆': {'precision': 0.5931758530183727, 'recall': 0.7313915857605178, 'f1': 0.6550724637681159, 'number': 309}
+3
+'舰船舰艇': {'precision': 0.3824959481361426, 'recall': 0.8054607508532423, 'f1': 0.5186813186813187, 'number': 293}
+'导弹': {'precision': 0.3774597495527728, 'recall': 0.7843866171003717, 'f1': 0.5096618357487922, 'number': 269}
+'火炮': {'precision': 0.4479166666666667, 'recall': 0.5, 'f1': 0.4725274725274725, 'number': 172}
+'装甲车辆': {'precision': 0.587431693989071, 'recall': 0.6957928802588996, 'f1': 0.6370370370370371, 'number': 309}
+4
+'炸弹': {'precision': 0.21066666666666667, 'recall': 0.7085201793721974, 'f1': 0.32476875642343267, 'number': 223}
+'舰船舰艇': {'precision': 0.42718446601941745, 'recall': 0.7508532423208191, 'f1': 0.5445544554455445, 'number': 293}
+'导弹': {'precision': 0.32212389380530976, 'recall': 0.6765799256505576, 'f1': 0.43645083932853723, 'number': 269}
+'火炮': {'precision': 0.41397849462365593, 'recall': 0.4476744186046512, 'f1': 0.4301675977653632, 'number': 172}
+'装甲车辆': {'precision': 0.5184331797235023, 'recall': 0.7281553398058253, 'f1': 0.6056527590847914, 'number': 309}
+5
+'太空装备': {'precision': 0.3084223013048636, 'recall': 0.8637873754152824, 'f1': 0.45454545454545453, 'number': 301} 
+'炸弹': {'precision': 0.14668769716088328, 'recall': 0.4170403587443946, 'f1': 0.21703617269544925, 'number': 223} 
+'舰船舰艇': {'precision': 0.4129032258064516, 'recall': 0.6552901023890785, 'f1': 0.5065963060686015, 'number': 293}
+'导弹': {'precision': 0.3527054108216433, 'recall': 0.654275092936803, 'f1': 0.4583333333333333, 'number': 269}
+'火炮': {'precision': 0.4270833333333333, 'recall': 0.47674418604651164, 'f1': 0.45054945054945056, 'number': 172}
+'装甲车辆': {'precision': 0.5718157181571816, 'recall': 0.6828478964401294, 'f1': 0.6224188790560471, 'number': 309} 
+
+
+batch:
+{'input_ids': Tensor(shape=[5, 512], dtype=int64, place=Place(gpu:0), stop_gradient=True,
+       [[1   , 371 , 1004, ..., 0   , 0   , 0   ],
+        [1   , 371 , 1004, ..., 0   , 0   , 0   ],
+        [1   , 371 , 1004, ..., 0   , 0   , 0   ],
+        [1   , 371 , 1004, ..., 0   , 0   , 0   ],
+        [1   , 371 , 1004, ..., 0   , 0   , 0   ]]), 'token_type_ids': Tensor(shape=[5, 512], dtype=int64, place=Place(gpu:0), stop_gradient=True,
+       [[0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0],
+        [0, 0, 0, ..., 0, 0, 0]]), 'position_ids': Tensor(shape=[5, 512], dtype=int64, place=Place(gpu:0), stop_gradient=True,
+       [[0, 1, 2, ..., 0, 0, 0],
+        [0, 1, 2, ..., 0, 0, 0],
+        [0, 1, 2, ..., 0, 0, 0],
+        [0, 1, 2, ..., 0, 0, 0],
+        [0, 1, 2, ..., 0, 0, 0]]), 'attention_mask': Tensor(shape=[5, 512], dtype=int64, place=Place(gpu:0), stop_gradient=True,
+       [[1, 1, 1, ..., 0, 0, 0],
+        [1, 1, 1, ..., 0, 0, 0],
+        [1, 1, 1, ..., 0, 0, 0],
+        [1, 1, 1, ..., 0, 0, 0],
+        [1, 1, 1, ..., 0, 0, 0]]), 'start_positions': Tensor(shape=[5, 512], dtype=float32, place=Place(gpu:0), stop_gradient=True,
+       [[0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.]]), 'end_positions': Tensor(shape=[5, 512], dtype=float32, place=Place(gpu:0), stop_gradient=True,
+       [[0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.]])}
+
